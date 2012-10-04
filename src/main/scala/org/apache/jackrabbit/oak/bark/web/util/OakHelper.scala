@@ -22,17 +22,15 @@ import org.apache.jackrabbit.oak.Oak
 import org.apache.jackrabbit.oak.api.{ ContentRepository, ContentSession }
 import org.apache.jackrabbit.oak.plugins.`type`.{ DefaultTypeEditor, InitialContent, TypeValidatorProvider }
 import org.apache.jackrabbit.oak.plugins.commit.ConflictValidatorProvider
-import org.apache.jackrabbit.oak.plugins.lucene.{ LuceneHook, LuceneIndexProvider, LuceneReindexHook }
 import org.apache.jackrabbit.oak.plugins.name.{ NameValidatorProvider, NamespaceValidatorProvider }
-import org.apache.jackrabbit.oak.plugins.unique.UniqueIndexHook
-import org.apache.jackrabbit.oak.security.authorization.{ AccessControlValidatorProvider, PermissionValidatorProvider }
 import org.apache.jackrabbit.oak.security.privilege.PrivilegeValidatorProvider
-import org.apache.jackrabbit.oak.security.user.UserValidatorProvider
 import org.apache.jackrabbit.oak.spi.commit.{ CommitHook, CompositeHook, CompositeValidatorProvider, ValidatingHook, ValidatorProvider }
 import org.apache.jackrabbit.oak.spi.query.IndexUtils.DEFAULT_INDEX_HOME
-import org.apache.jackrabbit.oak.spi.security.user.UserConfig
-
 import javax.jcr.{ GuestCredentials, SimpleCredentials }
+import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProvider
+import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneReindexHook
+import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneHook
+import org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexHook
 
 trait OakHelper {
 
@@ -72,9 +70,8 @@ trait OakHelper {
 
   private[util] def buildDefaultCommitHook(): CommitHook =
     new CompositeHook(
-      new DefaultTypeEditor(),
       new ValidatingHook(createDefaultValidatorProvider()),
-      new UniqueIndexHook(),
+      new PropertyIndexHook(),
       new LuceneReindexHook(DEFAULT_INDEX_HOME),
       new LuceneHook(DEFAULT_INDEX_HOME));
 
@@ -84,10 +81,6 @@ trait OakHelper {
       new NamespaceValidatorProvider(),
       new TypeValidatorProvider(),
       new ConflictValidatorProvider(),
-      new PermissionValidatorProvider(),
-      new AccessControlValidatorProvider(),
-      // FIXME: retrieve from user context
-      new UserValidatorProvider(new UserConfig("admin")),
       new PrivilegeValidatorProvider());
 
   private[util] def setupInitialContent(mk: MicroKernel): MicroKernel = {

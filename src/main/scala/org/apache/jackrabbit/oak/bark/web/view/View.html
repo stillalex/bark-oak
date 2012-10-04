@@ -15,20 +15,28 @@
                   <li><span wicket:id="current" class="active">name</span></li>
                </ul>
             </div>
-               <div class="span12" wicket:id="addFormContainer">
-                  <form wicket:id="addForm" id="f"
-                     accept-charset="UTF-8"
-                     class="form-horizontal centered">
-
-                     <div class="input-prepend">
-                        <input type="text" value="" wicket:id="add"
-                           maxlength="50" placeholder="node name" />
-                     </div>
-                     <input type="submit" wicket:id="submit"
-                        class="btn btn-primary" value=" + " />
-                  </form>
-                  <br /> <span wicket:id="feedback" class="feedback"></span>
-               </div>
+            <div class="span12" wicket:id="addFormContainer">
+               <form wicket:id="addForm" id="f" accept-charset="UTF-8"
+                  class="form-horizontal span5">
+                  <input type="text" value="" wicket:id="add"
+                     class="input" maxlength="50"
+                     placeholder="Node name" /> <input type="submit"
+                     wicket:id="submit" class="btn btn-primary"
+                     value=" + " />
+               </form>
+               <form wicket:id="addPropertyForm" id="fp"
+                  accept-charset="UTF-8" class="form-horizontal span6">
+                  <input type="text" value="" wicket:id="name"
+                     maxlength="50" placeholder="Property name"
+                     class="input-medium" /> <input type="text" value=""
+                     wicket:id="val" maxlength="50"
+                     placeholder="Property value" class="input" /> <select
+                     wicket:id="ptype" class="input-small"></select> <input
+                     type="submit" wicket:id="submit"
+                     class="btn btn-primary" value=" + " />
+               </form>
+               <span wicket:id="feedback" class="feedback span11"></span>
+            </div>
             <div class="span5">
                <table class="table table-bordered">
                   <thead>
@@ -48,12 +56,14 @@
                <table class="table table-bordered">
                   <thead>
                      <tr>
-                        <th colspan="2">Node Details</th>
+                        <th colspan="2">Node Details(name, type,
+                           value)</th>
                      </tr>
                   </thead>
                   <tbody>
                      <tr wicket:id="properties">
                         <td><span wicket:id="name">name</span></td>
+                        <td><span wicket:id="type">type</span></td>
                         <td><span wicket:id="value">value</span></td>
                      </tr>
                   </tbody>

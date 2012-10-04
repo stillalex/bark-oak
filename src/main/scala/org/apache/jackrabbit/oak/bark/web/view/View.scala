@@ -17,8 +17,7 @@
 package org.apache.jackrabbit.oak.bark.web.view
 
 import scala.collection.JavaConversions.{ asScalaBuffer, iterableAsScalaIterable, seqAsJavaList }
-
-import org.apache.jackrabbit.oak.api.{ PropertyState, Tree }
+import org.apache.jackrabbit.oak.api.{ PropertyState, Tree, Type }
 import org.apache.jackrabbit.oak.bark.web.BaseTemplatePage
 import org.apache.jackrabbit.oak.commons.PathUtils
 import org.apache.wicket.Component
@@ -32,6 +31,8 @@ import org.apache.wicket.markup.repeater.data.{ DataView, ListDataProvider }
 import org.apache.wicket.model.{ LoadableDetachableModel, PropertyModel }
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException
 import org.apache.wicket.request.mapper.parameter.PageParameters
+import org.apache.wicket.model.Model
+import org.apache.wicket.markup.html.form.DropDownChoice
 
 class View(pp: PageParameters) extends BaseTemplatePage(pp) {
 
@@ -99,14 +100,15 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
   }
 
   private[view] def buildProps(root: Tree) {
-    val p: List[(String, String)] = root.getProperties().map(x ⇒ (x.getName(), psAsString(x))).toList;
+    val p: List[(String, String, Type[_])] = root.getProperties().map(x ⇒ (x.getName(), psAsString(x), x.getType())).toList;
 
-    add(new DataView[(String, String)]("properties", new ListDataProvider(p)) {
+    add(new DataView[(String, String, Type[_])]("properties", new ListDataProvider(p)) {
 
-      override def populateItem(item: Item[(String, String)]) {
-        val p: (String, String) = item.getModelObject();
+      override def populateItem(item: Item[(String, String, Type[_])]) {
+        val p: (String, String, Type[_]) = item.getModelObject();
         item.add(new Label("name", p._1));
         item.add(new Label("value", p._2));
+        item.add(new Label("type", p._3.toString()));
       }
     });
   }
@@ -126,6 +128,7 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
   private[view] def buildFormContainer(): Component = {
     val con = new WebMarkupContainer("addFormContainer");
     con.add(buildForm);
+    con.add(buildPropertyForm);
     con.add(new FeedbackPanel("feedback"));
     return con;
   }
@@ -136,6 +139,7 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
 
     val a = new RequiredTextField[String]("add", new PropertyModel[String](
       this, "addName"))
+    a.setLabel(new Model("Node name"));
 
     val submit = new Button("submit") {
       override def onSubmit() =
@@ -159,6 +163,52 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
     };
 
     form.add(a);
+    form.add(submit);
+    form.setDefaultButton(submit);
+    return form;
+  }
+
+  var addPName: String = "";
+  var addPVal: String = "";
+  var addPType: Type[String] = Type.STRING;
+
+  private[view] def buildPropertyForm(): Component = {
+    val form = new StatelessForm[Void]("addPropertyForm");
+    form.setOutputMarkupId(true);
+
+    val n = new RequiredTextField[String]("name", new PropertyModel[String](
+      this, "addPName"))
+    n.setLabel(new Model("Property name"));
+    val v = new RequiredTextField[String]("val", new PropertyModel[String](
+      this, "addPVal"))
+    v.setLabel(new Model("Property value"));
+
+    val t = new DropDownChoice[Type[String]]("ptype", new PropertyModel[Type[String]](this, "addPType"), List[Type[String]](Type.STRING));
+
+    val submit = new Button("submit") {
+      override def onSubmit() =
+        try {
+          val root = oakSession.getLatestRoot();
+          root.getTree(path).setProperty(n.getModelObject(), v.getModelObject(), t.getModelObject());
+          root.commit();
+
+          val pp: PageParameters = new PageParameters();
+          if (!"/".equals(path)) {
+            pp.set("p", path);
+          }
+          setResponsePage(classOf[View], pp);
+
+        } catch {
+          case e: Exception ⇒ {
+            e.printStackTrace()
+            error(e.getMessage());
+          }
+        }
+    };
+
+    form.add(n);
+    form.add(v);
+    form.add(t);
     form.add(submit);
     form.setDefaultButton(submit);
     return form;
