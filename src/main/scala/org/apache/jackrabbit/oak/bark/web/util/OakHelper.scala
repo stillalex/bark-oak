@@ -20,12 +20,12 @@ import org.apache.jackrabbit.mk.api.MicroKernel
 import org.apache.jackrabbit.mk.core.MicroKernelImpl
 import org.apache.jackrabbit.oak.Oak
 import org.apache.jackrabbit.oak.api.{ ContentRepository, ContentSession }
-import org.apache.jackrabbit.oak.plugins.`type`.{ DefaultTypeEditor, InitialContent, TypeValidatorProvider }
+import org.apache.jackrabbit.oak.plugins.nodetype.{ DefaultTypeEditor, InitialContent, TypeValidatorProvider }
 import org.apache.jackrabbit.oak.plugins.commit.ConflictValidatorProvider
 import org.apache.jackrabbit.oak.plugins.name.{ NameValidatorProvider, NamespaceValidatorProvider }
 import org.apache.jackrabbit.oak.security.privilege.PrivilegeValidatorProvider
 import org.apache.jackrabbit.oak.spi.commit.{ CommitHook, CompositeHook, CompositeValidatorProvider, ValidatingHook, ValidatorProvider }
-import org.apache.jackrabbit.oak.spi.query.IndexUtils.DEFAULT_INDEX_HOME
+import org.apache.jackrabbit.oak.plugins.index.IndexConstants.DEFAULT_INDEX_HOME
 import javax.jcr.{ GuestCredentials, SimpleCredentials }
 import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProvider
 import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneReindexHook

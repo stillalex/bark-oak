@@ -16,23 +16,22 @@
  */
 package org.apache.jackrabbit.oak.bark.web.view
 
-import scala.collection.JavaConversions.{ asScalaBuffer, iterableAsScalaIterable, seqAsJavaList }
-import org.apache.jackrabbit.oak.api.{ PropertyState, Tree, Type }
+import scala.collection.JavaConversions.{asScalaBuffer, iterableAsScalaIterable, seqAsJavaList}
+
+import org.apache.jackrabbit.oak.api.{PropertyState, Tree, Type}
 import org.apache.jackrabbit.oak.bark.web.BaseTemplatePage
 import org.apache.jackrabbit.oak.commons.PathUtils
 import org.apache.wicket.Component
 import org.apache.wicket.markup.html.WebMarkupContainer
 import org.apache.wicket.markup.html.basic.Label
-import org.apache.wicket.markup.html.form.{ Button, RequiredTextField, StatelessForm }
+import org.apache.wicket.markup.html.form.{Button, DropDownChoice, RequiredTextField, StatelessForm}
 import org.apache.wicket.markup.html.link.BookmarkablePageLink
 import org.apache.wicket.markup.html.panel.FeedbackPanel
 import org.apache.wicket.markup.repeater.Item
-import org.apache.wicket.markup.repeater.data.{ DataView, ListDataProvider }
-import org.apache.wicket.model.{ LoadableDetachableModel, PropertyModel }
+import org.apache.wicket.markup.repeater.data.{DataView, ListDataProvider}
+import org.apache.wicket.model.{LoadableDetachableModel, Model, PropertyModel}
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException
 import org.apache.wicket.request.mapper.parameter.PageParameters
-import org.apache.wicket.model.Model
-import org.apache.wicket.markup.html.form.DropDownChoice
 
 class View(pp: PageParameters) extends BaseTemplatePage(pp) {
 
@@ -115,9 +114,9 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
 
   private[view] def psAsString(ps: PropertyState): String = {
     if (ps.isArray()) {
-      return "[" + ps.getValues().foldLeft("")((s, v) ⇒ v.getString() + ", " + s) + "]";
+      return "[" + ps.getValue(Type.STRINGS).foldLeft("")((s, v) ⇒ v + ", " + s) + "]";
     }
-    return ps.getValue().getString();
+    return ps.getValue(Type.STRING);
   }
 
   //
