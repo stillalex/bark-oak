@@ -32,16 +32,16 @@ object StateChecker {
   def checkIfPageStateless(p: Page) {
     println("StateCheker check");
     if (p.isPageStateless()) {
-      println("StateCheker check - page is good");
+      println("StateChecker check - page is good");
       return ;
     }
 
     p.visitChildren(classOf[Component], new IVisitor[Component, Void]() {
       def component(component: Component, visit: IVisit[Void]) = {
         if (!component.isStateless()) {
-          println("StateCheker check - component " + component.getMarkupId() + " is NOT stateless!! ");
+          println("StateChecker check - component " + component.getMarkupId() + " is NOT stateless!! ");
         } else {
-          println("StateCheker check - component " + component.getMarkupId() + " is stateless");
+          println("StateChecker check - component " + component.getMarkupId() + " is stateless");
         }
       }
     });

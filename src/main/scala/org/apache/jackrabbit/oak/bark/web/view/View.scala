@@ -16,22 +16,24 @@
  */
 package org.apache.jackrabbit.oak.bark.web.view
 
-import scala.collection.JavaConversions.{asScalaBuffer, iterableAsScalaIterable, seqAsJavaList}
-
-import org.apache.jackrabbit.oak.api.{PropertyState, Tree, Type}
+import scala.collection.JavaConversions.{ asScalaBuffer, iterableAsScalaIterable, seqAsJavaList }
+import org.apache.jackrabbit.oak.api.{ PropertyState, Tree, Type }
 import org.apache.jackrabbit.oak.bark.web.BaseTemplatePage
 import org.apache.jackrabbit.oak.commons.PathUtils
 import org.apache.wicket.Component
 import org.apache.wicket.markup.html.WebMarkupContainer
 import org.apache.wicket.markup.html.basic.Label
-import org.apache.wicket.markup.html.form.{Button, DropDownChoice, RequiredTextField, StatelessForm}
+import org.apache.wicket.markup.html.form.{ Button, DropDownChoice, RequiredTextField, StatelessForm }
 import org.apache.wicket.markup.html.link.BookmarkablePageLink
 import org.apache.wicket.markup.html.panel.FeedbackPanel
 import org.apache.wicket.markup.repeater.Item
-import org.apache.wicket.markup.repeater.data.{DataView, ListDataProvider}
-import org.apache.wicket.model.{LoadableDetachableModel, Model, PropertyModel}
+import org.apache.wicket.markup.repeater.data.{ DataView, ListDataProvider }
+import org.apache.wicket.model.{ LoadableDetachableModel, Model, PropertyModel }
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException
 import org.apache.wicket.request.mapper.parameter.PageParameters
+import org.apache.jackrabbit.oak.spi.query.PropertyValues
+import org.apache.jackrabbit.oak.namepath.NamePathMapper
+import org.apache.wicket.markup.html.form.IChoiceRenderer
 
 class View(pp: PageParameters) extends BaseTemplatePage(pp) {
 
@@ -144,7 +146,9 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
       override def onSubmit() =
         try {
           val root = oakSession.getLatestRoot();
-          root.getTree(path).addChild(a.getModelObject);
+          val c = root.getTree(path).addChild(addName);
+          c.setProperty("jcr:primaryType", "nt:unstructured");
+
           root.commit();
 
           val pp: PageParameters = new PageParameters();
@@ -169,7 +173,7 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
 
   var addPName: String = "";
   var addPVal: String = "";
-  var addPType: Type[String] = Type.STRING;
+  var addPType: Int = Type.STRING.tag;
 
   private[view] def buildPropertyForm(): Component = {
     val form = new StatelessForm[Void]("addPropertyForm");
@@ -182,13 +186,18 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
       this, "addPVal"))
     v.setLabel(new Model("Property value"));
 
-    val t = new DropDownChoice[Type[String]]("ptype", new PropertyModel[Type[String]](this, "addPType"), List[Type[String]](Type.STRING));
+    val t = new DropDownChoice[Int]("ptype", new PropertyModel[Int](this, "addPType"),
+      List[Int](Type.STRING.tag, Type.BOOLEAN.tag, Type.DATE.tag, Type.DECIMAL.tag, Type.DOUBLE.tag, Type.LONG.tag, Type.NAME.tag, Type.REFERENCE.tag, Type.WEAKREFERENCE.tag), new TypeChoiceRenderer());
 
     val submit = new Button("submit") {
       override def onSubmit() =
         try {
           val root = oakSession.getLatestRoot();
-          root.getTree(path).setProperty(n.getModelObject(), v.getModelObject(), t.getModelObject());
+
+          root.getTree(path).setProperty(addPName, addPVal, Type.fromTag(addPType, false).asInstanceOf[Type[Object]]);
+          //            PropertyValues.convert(PropertyValues.newString(addPVal), addPType, NamePathMapper.DEFAULT).getValue(Type.fromTag(addPType, false)), 
+          //            Type.fromTag(addPType, false).asInstanceOf[Type[Object]]);
+
           root.commit();
 
           val pp: PageParameters = new PageParameters();
@@ -211,6 +220,11 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
     form.add(submit);
     form.setDefaultButton(submit);
     return form;
+  }
+
+  private class TypeChoiceRenderer extends IChoiceRenderer[Int] {
+    override def getDisplayValue(id: Int) = Type.fromTag(id, false).toString();
+    override def getIdValue(id: Int, index: Int) = id.toString;
   }
 
 }

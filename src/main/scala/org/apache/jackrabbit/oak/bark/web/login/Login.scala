@@ -42,6 +42,7 @@ class Login extends BaseTemplatePage {
         val pass: String = p.getModelObject;
         getA.login(user, pass) match {
           case Right(u) ⇒ {
+            continueToOriginalDestination();
             setResponsePage(getApplication().getHomePage());
           }
           case Left(u) ⇒ {

@@ -16,21 +16,21 @@
  */
 package org.apache.jackrabbit.oak.bark.web.util
 
-import org.apache.jackrabbit.mk.api.MicroKernel
-import org.apache.jackrabbit.mk.core.MicroKernelImpl
 import org.apache.jackrabbit.oak.Oak
 import org.apache.jackrabbit.oak.api.{ ContentRepository, ContentSession }
-import org.apache.jackrabbit.oak.plugins.nodetype.{ DefaultTypeEditor, InitialContent, TypeValidatorProvider }
-import org.apache.jackrabbit.oak.plugins.commit.ConflictValidatorProvider
+import org.apache.jackrabbit.oak.plugins.commit.{ AnnotatingConflictHandler, ConflictValidatorProvider }
+import org.apache.jackrabbit.oak.plugins.index.CompositeIndexHookProvider
+import org.apache.jackrabbit.oak.plugins.index.IndexHookManager
+import org.apache.jackrabbit.oak.plugins.index.lucene.{ LuceneIndexHookProvider, LuceneIndexProvider }
+import org.apache.jackrabbit.oak.plugins.index.property.{ PropertyIndexHookProvider, PropertyIndexProvider }
 import org.apache.jackrabbit.oak.plugins.name.{ NameValidatorProvider, NamespaceValidatorProvider }
-import org.apache.jackrabbit.oak.security.privilege.PrivilegeValidatorProvider
-import org.apache.jackrabbit.oak.spi.commit.{ CommitHook, CompositeHook, CompositeValidatorProvider, ValidatingHook, ValidatorProvider }
-import org.apache.jackrabbit.oak.plugins.index.IndexConstants.DEFAULT_INDEX_HOME
+import org.apache.jackrabbit.oak.plugins.nodetype.{ DefaultTypeEditor, InitialContent, TypeValidatorProvider }
+import org.apache.jackrabbit.oak.security.{ OakConfiguration, SecurityProviderImpl }
 import javax.jcr.{ GuestCredentials, SimpleCredentials }
-import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneIndexProvider
-import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneReindexHook
-import org.apache.jackrabbit.oak.plugins.index.lucene.LuceneHook
-import org.apache.jackrabbit.oak.plugins.index.property.PropertyIndexHook
+import javax.security.auth.login.Configuration
+import org.apache.jackrabbit.oak.plugins.nodetype.RegistrationValidatorProvider
+import org.apache.jackrabbit.oak.plugins.index.lucene.util.LuceneInitializerHelper
+import org.apache.jackrabbit.oak.plugins.index.nodetype.NodeTypeIndexProvider
 
 trait OakHelper {
 
@@ -39,6 +39,7 @@ trait OakHelper {
   var session: Option[ContentSession] = None;
 
   def initOak() = {
+    Configuration.setConfiguration(new OakConfiguration());
     repository = Some(createRepository)
     session = guestSession(repository);
   }
@@ -64,29 +65,26 @@ trait OakHelper {
   // ----------------------------------------------------
 
   private[util] def createRepository(): ContentRepository =
-    new Oak(setupInitialContent(new MicroKernelImpl())).`with`(buildDefaultCommitHook())
-      .`with`(new LuceneIndexProvider(DEFAULT_INDEX_HOME))
+    new Oak()
+      .`with`(new InitialContent())
+      .`with`(new LuceneInitializerHelper("/oak:index/luceneGlobal"))
+
+      .`with`(new DefaultTypeEditor())
+      .`with`(new SecurityProviderImpl())
+      .`with`(new NameValidatorProvider())
+      .`with`(new NamespaceValidatorProvider())
+      .`with`(new TypeValidatorProvider())
+      .`with`(new RegistrationValidatorProvider())
+      .`with`(new ConflictValidatorProvider())
+      .`with`(new AnnotatingConflictHandler())
+
+      .`with`(new PropertyIndexHookProvider())
+      .`with`(new PropertyIndexProvider())
+      .`with`(new NodeTypeIndexProvider())
+
+      .`with`(new LuceneIndexHookProvider())
+      .`with`(new LuceneIndexProvider())
       .createContentRepository();
-
-  private[util] def buildDefaultCommitHook(): CommitHook =
-    new CompositeHook(
-      new ValidatingHook(createDefaultValidatorProvider()),
-      new PropertyIndexHook(),
-      new LuceneReindexHook(DEFAULT_INDEX_HOME),
-      new LuceneHook(DEFAULT_INDEX_HOME));
-
-  private[util] def createDefaultValidatorProvider(): ValidatorProvider =
-    new CompositeValidatorProvider(
-      new NameValidatorProvider(),
-      new NamespaceValidatorProvider(),
-      new TypeValidatorProvider(),
-      new ConflictValidatorProvider(),
-      new PrivilegeValidatorProvider());
-
-  private[util] def setupInitialContent(mk: MicroKernel): MicroKernel = {
-    new InitialContent().available(mk);
-    return mk;
-  }
 
   // ----------------------------------------------------
   // OAK SESSION
