@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:head>
+   <title>Explore</title>
+</wicket:head>
+<body>
+   <wicket:extend>
+      <div class="container">
+         <div class="row">
+            <div class="span12">
+               <ul class="breadcrumb">
+                  <li><a wicket:id="root" href="#">/</a></li>
+                  <li wicket:id="paths"><a wicket:id="segment"
+                     href="#"><span wicket:id="name">name</span></a></li>
+                  <li><span wicket:id="current" class="active">name</span></li>
+               </ul>
+            </div>
+            <div class="span12" wicket:id="addFormContainer">
+               <form wicket:id="addForm" id="f" accept-charset="UTF-8"
+                  class="form-horizontal span5">
+                  <input type="text" value="" wicket:id="add"
+                     class="input" maxlength="50"
+                     placeholder="Node name" /> <input type="submit"
+                     wicket:id="submit" class="btn btn-primary"
+                     value=" + " />
+               </form>
+               <form wicket:id="addPropertyForm" id="fp"
+                  accept-charset="UTF-8" class="form-horizontal span6">
+                  <input type="text" value="" wicket:id="name"
+                     maxlength="50" placeholder="Property name"
+                     class="input-medium" /> <input type="text" value=""
+                     wicket:id="val" maxlength="50"
+                     placeholder="Property value" class="input" /> <select
+                     wicket:id="ptype" class="input-small"></select> <input
+                     type="submit" wicket:id="submit"
+                     class="btn btn-primary" value=" + " />
+               </form>
+               <span wicket:id="feedback" class="feedback span11"></span>
+            </div>
+            <div class="span5">
+               <table class="table table-bordered">
+                  <thead>
+                     <tr>
+                        <th>Children</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr wicket:id="children">
+                        <td><a wicket:id="child" href="#"><span
+                              wicket:id="name">name</span></a></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+            <div class="span7">
+               <table class="table table-bordered">
+                  <thead>
+                     <tr>
+                        <th colspan="2">Node Details(name, type,
+                           value)</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr wicket:id="properties">
+                        <td><span wicket:id="name">name</span></td>
+                        <td><span wicket:id="type">type</span></td>
+                        <td><span wicket:id="value">value</span></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+         </div>
+      </div>
+   </wicket:extend>
+</body>
+</html>
