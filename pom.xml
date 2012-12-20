@@ -34,9 +34,9 @@
     </licenses>
     <properties>
         <oak.version>0.6-SNAPSHOT</oak.version>
-        <wicket.version>6.1.0</wicket.version>
+        <wicket.version>6.4.0</wicket.version>
         <scala.version>2.9.2</scala.version>
-        <lucene.version>4.0.0-BETA</lucene.version>
+        <lucene.version>4.0.0</lucene.version>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <encoding>UTF-8</encoding>
@@ -69,6 +69,12 @@
             <artifactId>oak-lucene</artifactId>
             <version>${oak.version}</version>
         </dependency>
+        <!-- OAK MK DEPENDENCY -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.3.158</version>
+        </dependency>
 
         <!-- WICKET DEPENDENCIES -->
         <dependency>
@@ -82,6 +88,7 @@
             <version>${wicket.version}</version>
         </dependency>
 
+        <!-- LUCENE DEPENDENCIES -->
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
@@ -97,6 +104,7 @@
             <artifactId>tika-core</artifactId>
             <version>1.2</version>
         </dependency>
+
         <!-- javax.servlet -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -109,6 +117,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- JUNIT DEPENDENCY FOR TESTING -->
         <dependency>
@@ -152,6 +161,13 @@
                     <stopPort>9999</stopPort>
                     <useProvidedScope>true</useProvidedScope>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                        <version>${logback.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>net.alchim31.maven</groupId>

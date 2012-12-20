@@ -20,6 +20,7 @@ import org.apache.jackrabbit.oak.api.{ ContentRepository, ContentSession }
 import org.apache.wicket.markup.html.WebPage
 import org.apache.wicket.request.mapper.parameter.PageParameters
 import org.apache.jackrabbit.oak.bark.BarkApp
+import org.apache.jackrabbit.oak.api.Root
 
 abstract class BasePage(pp: PageParameters) extends WebPage(pp) {
 
@@ -30,5 +31,7 @@ abstract class BasePage(pp: PageParameters) extends WebPage(pp) {
   def oakRepository(): ContentRepository = getA.repository.get
 
   def oakSession(): ContentSession = getA.session.get
+
+  def oakRoot(): Option[Root] = getA.root
 
 }

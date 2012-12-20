@@ -25,5 +25,6 @@ class Index(pp: PageParameters) extends BaseTemplatePage(pp) {
   setStatelessHint(true);
   add(new Label("repo", oakRepository.toString()));
   add(new Label("sess", oakSession.toString()));
+  add(new Label("root", oakRoot.toString()));
 
 }

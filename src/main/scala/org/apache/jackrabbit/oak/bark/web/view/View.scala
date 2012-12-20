@@ -41,11 +41,10 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
 
   val root: LoadableDetachableModel[Tree] = new LoadableDetachableModel[Tree]() {
     def load(): Tree = {
-      val r = oakSession.getLatestRoot().getTree(path);
-      if (r == null) {
+      if (oakRoot.isEmpty) {
         throw new AbortWithHttpErrorCodeException(404);
       }
-      return r;
+      return oakRoot.get.getTree(path);
     }
   }
 
@@ -145,11 +144,8 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
     val submit = new Button("submit") {
       override def onSubmit() =
         try {
-          val root = oakSession.getLatestRoot();
-          val c = root.getTree(path).addChild(addName);
+          val c = oakRoot.get.getTree(path).addChild(addName);
           c.setProperty("jcr:primaryType", "nt:unstructured");
-
-          root.commit();
 
           val pp: PageParameters = new PageParameters();
           if (!"/".equals(path)) {
@@ -192,13 +188,9 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
     val submit = new Button("submit") {
       override def onSubmit() =
         try {
-          val root = oakSession.getLatestRoot();
-
-          root.getTree(path).setProperty(addPName, addPVal, Type.fromTag(addPType, false).asInstanceOf[Type[Object]]);
+          oakRoot.get.getTree(path).setProperty(addPName, addPVal, Type.fromTag(addPType, false).asInstanceOf[Type[Object]]);
           //            PropertyValues.convert(PropertyValues.newString(addPVal), addPType, NamePathMapper.DEFAULT).getValue(Type.fromTag(addPType, false)), 
           //            Type.fromTag(addPType, false).asInstanceOf[Type[Object]]);
-
-          root.commit();
 
           val pp: PageParameters = new PageParameters();
           if (!"/".equals(path)) {
