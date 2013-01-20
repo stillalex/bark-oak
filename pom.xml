@@ -50,7 +50,6 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- OAK DEPENDENCY -->
@@ -69,7 +68,7 @@
             <artifactId>oak-lucene</artifactId>
             <version>${oak.version}</version>
         </dependency>
-        <!-- OAK MK DEPENDENCY -->
+        <!-- OAK H2MK DEPENDENCY -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -118,7 +117,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- JUNIT DEPENDENCY FOR TESTING -->
@@ -161,15 +159,7 @@
                     <scanIntervalSeconds>10</scanIntervalSeconds>
                     <stopKey>foo</stopKey>
                     <stopPort>9999</stopPort>
-                    <useProvidedScope>true</useProvidedScope>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                        <version>${logback.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>net.alchim31.maven</groupId>

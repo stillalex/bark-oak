@@ -16,23 +16,22 @@
  */
 package org.apache.jackrabbit.oak.bark
 
+import org.apache.jackrabbit.mk.core.MicroKernelImpl
 import org.apache.jackrabbit.oak.Oak
 import org.apache.jackrabbit.oak.api.{ ContentRepository, ContentSession, Root }
 import org.apache.jackrabbit.oak.plugins.commit.{ AnnotatingConflictHandler, ConflictValidatorProvider }
 import org.apache.jackrabbit.oak.plugins.index.lucene.{ LuceneIndexHookProvider, LuceneIndexProvider }
 import org.apache.jackrabbit.oak.plugins.index.lucene.util.LuceneInitializerHelper
 import org.apache.jackrabbit.oak.plugins.index.nodetype.NodeTypeIndexProvider
-import org.apache.jackrabbit.oak.plugins.index.property.{ PropertyIndexHookProvider, PropertyIndexProvider }
+import org.apache.jackrabbit.oak.plugins.index.p2.{ Property2IndexHookProvider, Property2IndexProvider }
 import org.apache.jackrabbit.oak.plugins.name.{ NameValidatorProvider, NamespaceValidatorProvider }
-import org.apache.jackrabbit.oak.plugins.nodetype.{ DefaultTypeEditor, InitialContent, RegistrationValidatorProvider, TypeValidatorProvider }
+import org.apache.jackrabbit.oak.plugins.nodetype.{ DefaultTypeEditor, RegistrationValidatorProvider, TypeValidatorProvider }
+import org.apache.jackrabbit.oak.plugins.nodetype.write.InitialContent
+import org.apache.jackrabbit.oak.plugins.version.VersionHook
 import org.apache.jackrabbit.oak.security.{ OakConfiguration, SecurityProviderImpl }
+
 import javax.jcr.{ GuestCredentials, SimpleCredentials }
 import javax.security.auth.login.Configuration
-import org.apache.jackrabbit.oak.plugins.index.p2.Property2IndexHookProvider
-import org.apache.jackrabbit.oak.plugins.index.p2.Property2IndexProvider
-import org.apache.jackrabbit.mk.core.MicroKernelImpl
-import java.util.concurrent.Executors
-import org.apache.jackrabbit.oak.plugins.version.VersionHook
 
 trait BarkOakHelper {
 

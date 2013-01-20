@@ -42,7 +42,7 @@ abstract class BaseTemplatePage(pp: PageParameters) extends BasePage(pp) {
   add(new StatelessLink("commit") {
     override def onClick() =
       oakRoot match {
-        case Some(r) ⇒ r.commit();
+        case Some(r) ⇒ { r.commit(); setResponsePage(getApplication().getHomePage()); }
         case _ ⇒ ;
       }
   });
@@ -50,7 +50,7 @@ abstract class BaseTemplatePage(pp: PageParameters) extends BasePage(pp) {
   add(new StatelessLink("rebase") {
     override def onClick() =
       oakRoot match {
-        case Some(r) ⇒ r.rebase();
+        case Some(r) ⇒ { r.rebase(); setResponsePage(getApplication().getHomePage()); }
         case _ ⇒ ;
       }
   });
@@ -58,7 +58,7 @@ abstract class BaseTemplatePage(pp: PageParameters) extends BasePage(pp) {
   add(new StatelessLink("refresh") {
     override def onClick() =
       oakRoot match {
-        case Some(r) ⇒ r.refresh();
+        case Some(r) ⇒ { r.refresh(); setResponsePage(getApplication().getHomePage()); }
         case _ ⇒ ;
       }
   });
