@@ -35,7 +35,7 @@
     <properties>
         <oak.version>0.6-SNAPSHOT</oak.version>
         <wicket.version>6.4.0</wicket.version>
-        <scala.version>2.9.2</scala.version>
+        <scala.version>2.10.0</scala.version>
         <lucene.version>4.0.0</lucene.version>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
@@ -112,6 +112,7 @@
             <version>2.5</version>
             <scope>provided</scope>
         </dependency>
+
         <!-- LOGGING DEPENDENCIES - SLF4J -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -119,6 +120,7 @@
             <version>${slf4j.version}</version>
             <scope>provided</scope>
         </dependency>
+
         <!-- JUNIT DEPENDENCY FOR TESTING -->
         <dependency>
             <groupId>junit</groupId>

@@ -20,7 +20,7 @@ import org.apache.jackrabbit.oak.bark.web.home.Index
 import org.apache.jackrabbit.oak.bark.web.login.Login
 import org.apache.jackrabbit.oak.bark.web.view.View
 import org.apache.wicket.protocol.http.WebApplication
-import org.apache.wicket.request.{Request, Response}
+import org.apache.wicket.request.{ Request, Response }
 
 class BarkApp extends WebApplication with BarkOakHelper {
 
