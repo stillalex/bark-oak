@@ -37,14 +37,28 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer
 
 class View(pp: PageParameters) extends BaseTemplatePage(pp) {
 
-  val path: String = pp.get("p").toString("/");
+  def this() = this(null);
+
+  val path: String = if (pp != null) {
+    pp.get("p").toString("/");
+  } else {
+    "/"
+  }
 
   val root: LoadableDetachableModel[Tree] = new LoadableDetachableModel[Tree]() {
     def load(): Tree = {
       if (oakRoot.isEmpty) {
         throw new AbortWithHttpErrorCodeException(404);
       }
-      return oakRoot.get.getTree(path);
+      try {
+        val t = oakRoot.get.getTree(path);
+        if (t.exists()) {
+          return t;
+        }
+        throw new AbortWithHttpErrorCodeException(404);
+      } catch {
+        case e: IllegalArgumentException ⇒ throw new AbortWithHttpErrorCodeException(404);
+      }
     }
   }
 
@@ -145,7 +159,7 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
       override def onSubmit() =
         try {
           val c = oakRoot.get.getTree(path).addChild(addName);
-          c.setProperty("jcr:primaryType", "nt:unstructured");
+          c.setProperty("jcr:primaryType", "nt:unstructured", Type.NAME);
 
           val pp: PageParameters = new PageParameters();
           if (!"/".equals(path)) {

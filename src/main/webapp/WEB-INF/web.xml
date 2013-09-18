@@ -10,6 +10,10 @@
             <param-name>applicationClassName</param-name>
             <param-value>org.apache.jackrabbit.oak.bark.BarkApp</param-value>
         </init-param>
+        <init-param>
+            <param-name>ignorePaths</param-name>
+            <param-value>/css,/js,/img</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>bark.app</filter-name>
