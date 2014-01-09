@@ -8,12 +8,24 @@
       <div class="container">
          <div class="row">
             <div class="span12">
+
+               <ul class="breadcrumb pull-right">
+                  <li wicket:id="dirty"><p class="navbar-text"
+                        style="color: red; font-weight: bold;">
+                        <i class="icon-exclamation-sign"></i>
+                     </p></li>
+                  <li><a wicket:id="commit">#commit</a></li>
+                  <li><a wicket:id="rebase">#rebase</a></li>
+                  <li><a wicket:id="refresh">#refresh</a></li>
+               </ul>
+
                <ul class="breadcrumb">
                   <li><a wicket:id="root" href="#">/</a></li>
                   <li wicket:id="paths"><a wicket:id="segment"
                      href="#"><span wicket:id="name">name</span></a></li>
                   <li><span wicket:id="current" class="active">name</span></li>
                </ul>
+
             </div>
             <div class="span12" wicket:id="addFormContainer">
                <form wicket:id="addForm" id="f" accept-charset="UTF-8"

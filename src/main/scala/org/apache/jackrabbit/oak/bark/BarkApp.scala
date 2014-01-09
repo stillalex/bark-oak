@@ -21,12 +21,13 @@ import org.apache.jackrabbit.oak.bark.web.login.Login
 import org.apache.jackrabbit.oak.bark.web.view.View
 import org.apache.wicket.protocol.http.WebApplication
 import org.apache.wicket.request.{ Request, Response }
+import com.pfalabs.soak.OakRepository
 
-class BarkApp extends WebApplication with BarkOakHelper {
+class BarkApp extends WebApplication with OakRepository {
 
   override def getHomePage = classOf[Index];
 
-  override def newSession(request: Request, response: Response) = new BaseSession(request);
+  override def newSession(request: Request, response: Response) = new BaseSession(request, repository);
 
   override def init() = {
     super.init();
@@ -41,7 +42,7 @@ class BarkApp extends WebApplication with BarkOakHelper {
     mountPage("/login", classOf[Login]);
     mountPage("/view", classOf[View]);
 
-    initOak();
+    initOak("bark-oak");
   }
 }
   

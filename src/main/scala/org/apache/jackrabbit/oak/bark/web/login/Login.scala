@@ -18,7 +18,10 @@ package org.apache.jackrabbit.oak.bark.web.login
 
 import org.apache.jackrabbit.oak.bark.web.BaseTemplatePage
 import org.apache.wicket.Component
-import org.apache.wicket.markup.html.form.{ Button, PasswordTextField, RequiredTextField, StatelessForm }
+import org.apache.wicket.markup.html.form.Button
+import org.apache.wicket.markup.html.form.Form
+import org.apache.wicket.markup.html.form.PasswordTextField
+import org.apache.wicket.markup.html.form.RequiredTextField
 import org.apache.wicket.markup.html.panel.FeedbackPanel
 import org.apache.wicket.model.PropertyModel
 
@@ -28,7 +31,7 @@ class Login extends BaseTemplatePage {
   var pass: String = "";
 
   def buildForm(): Component = {
-    val form = new StatelessForm[Void]("loginForm");
+    val form = new Form[Void]("loginForm");
     form.setOutputMarkupId(true);
 
     val u = new RequiredTextField[String]("u", new PropertyModel[String](
@@ -40,7 +43,7 @@ class Login extends BaseTemplatePage {
       override def onSubmit() {
         val user: String = u.getModelObject;
         val pass: String = p.getModelObject;
-        getA.login(user, pass) match {
+        getS.login(user, pass) match {
           case Right(u) ⇒ {
             continueToOriginalDestination();
             setResponsePage(getApplication().getHomePage());

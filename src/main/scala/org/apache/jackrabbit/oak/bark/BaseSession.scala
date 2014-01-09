@@ -18,7 +18,55 @@ package org.apache.jackrabbit.oak.bark
 
 import org.apache.wicket.protocol.http.WebSession
 import org.apache.wicket.request.Request
+import org.apache.jackrabbit.oak.api.ContentSession
+import org.apache.jackrabbit.oak.api.Root
+import org.apache.jackrabbit.oak.api.ContentRepository
+import javax.jcr.GuestCredentials
+import javax.jcr.SimpleCredentials
+import com.pfalabs.soak.Sessions._
 
-class BaseSession(r: Request) extends WebSession(r) {
+class BaseSession(r: Request, repository: Option[ContentRepository]) extends WebSession(r) {
+
+  var session: Option[ContentSession] = guestSession(repository);
+
+  var root: Option[Root] = latestRoot(session);
+
+  def isRO(): Boolean = isReadOnly(session);
+
+  def login(u: String, p: String): Either[String, ContentSession] = login(repository.get, u, p) match {
+    case Right(u) ⇒ {
+      session = Some(u);
+      root = latestRoot(session);
+      return Right(u);
+    }
+    case Left(u) ⇒ {
+      return Left(u);
+    }
+  }
+
+  def logout() = if (!isReadOnly(session)) {
+    session = guestSession(repository);
+    root = latestRoot(session);
+  }
+
+  // ----------------------------------------------------
+  // OAK SESSION
+  // ----------------------------------------------------
+
+  private def latestRoot(session: Option[ContentSession]): Option[Root] =
+    session match {
+      case Some(s) ⇒ Some(s.getLatestRoot());
+      case None ⇒ None;
+    }
+
+  def login(repo: ContentRepository, u: String, p: String): Either[String, ContentSession] =
+    try {
+      return Right(repo.login(new SimpleCredentials(u, p.toCharArray()), null));
+    } catch {
+      case e: Exception ⇒ {
+        e.printStackTrace()
+        Left(e.getMessage());
+      }
+    }
 
 }

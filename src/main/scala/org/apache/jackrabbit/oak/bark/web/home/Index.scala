@@ -22,7 +22,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters
 
 class Index(pp: PageParameters) extends BaseTemplatePage(pp) {
 
-  setStatelessHint(true);
+//  setStatelessHint(true);
   add(new Label("repo", oakRepository.toString()));
   add(new Label("sess", oakSession.toString()));
   add(new Label("root", oakRoot.toString()));

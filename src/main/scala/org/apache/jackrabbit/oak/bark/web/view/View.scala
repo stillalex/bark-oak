@@ -34,6 +34,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters
 import org.apache.jackrabbit.oak.spi.query.PropertyValues
 import org.apache.jackrabbit.oak.namepath.NamePathMapper
 import org.apache.wicket.markup.html.form.IChoiceRenderer
+import org.apache.jackrabbit.oak.plugins.value.Conversions
+import javax.jcr.PropertyType
+import org.apache.jackrabbit.oak.plugins.memory.PropertyStates
+import org.apache.wicket.markup.html.link.StatelessLink
 
 class View(pp: PageParameters) extends BaseTemplatePage(pp) {
 
@@ -70,7 +74,7 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
   buildChildren(root.getObject(), path);
   buildProps(root.getObject());
 
-  add(buildFormContainer().setVisibilityAllowed(!getA.isRO));
+  add(buildFormContainer().setVisibilityAllowed(!getS.isRO));
 
   //
   // --
@@ -160,13 +164,7 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
         try {
           val c = oakRoot.get.getTree(path).addChild(addName);
           c.setProperty("jcr:primaryType", "nt:unstructured", Type.NAME);
-
-          val pp: PageParameters = new PageParameters();
-          if (!"/".equals(path)) {
-            pp.set("p", path);
-          }
-          setResponsePage(classOf[View], pp);
-
+          setResponseToMe();
         } catch {
           case e: Exception ⇒ {
             e.printStackTrace()
@@ -202,16 +200,21 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
     val submit = new Button("submit") {
       override def onSubmit() =
         try {
-          oakRoot.get.getTree(path).setProperty(addPName, addPVal, Type.fromTag(addPType, false).asInstanceOf[Type[Object]]);
-          //            PropertyValues.convert(PropertyValues.newString(addPVal), addPType, NamePathMapper.DEFAULT).getValue(Type.fromTag(addPType, false)), 
-          //            Type.fromTag(addPType, false).asInstanceOf[Type[Object]]);
+          val p: PropertyState = addPType match {
+            case PropertyType.STRING ⇒ PropertyStates.createProperty(addPName, addPVal, addPType);
+            case PropertyType.BOOLEAN ⇒ PropertyStates.createProperty(addPName, addPVal, addPType);
+            case PropertyType.DECIMAL ⇒ PropertyStates.createProperty(addPName, addPVal, addPType);
+            case PropertyType.DOUBLE ⇒ PropertyStates.createProperty(addPName, addPVal, addPType);
+            case PropertyType.LONG ⇒ PropertyStates.createProperty(addPName, addPVal, addPType);
+            case PropertyType.DATE ⇒ PropertyStates.createProperty(addPName, addPVal, addPType);
 
-          val pp: PageParameters = new PageParameters();
-          if (!"/".equals(path)) {
-            pp.set("p", path);
+            case PropertyType.NAME ⇒ PropertyStates.createProperty(addPName, addPVal, Type.NAME);
+            case PropertyType.REFERENCE ⇒ PropertyStates.createProperty(addPName, addPVal, Type.REFERENCE);
+            case PropertyType.WEAKREFERENCE ⇒ PropertyStates.createProperty(addPName, addPVal, Type.WEAKREFERENCE);
           }
-          setResponsePage(classOf[View], pp);
 
+          oakRoot.get.getTree(path).setProperty(p);
+          setResponseToMe();
         } catch {
           case e: Exception ⇒ {
             e.printStackTrace()
@@ -227,6 +230,44 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
     form.setDefaultButton(submit);
     return form;
   }
+
+  def setResponseToMe() = {
+    val pp: PageParameters = new PageParameters();
+    if (!"/".equals(path)) {
+      pp.set("p", path);
+    }
+    setResponsePage(classOf[View], pp);
+  }
+
+  // ---------------------------------------------------------------------------------------------------
+
+  add(new WebMarkupContainer("dirty").setVisibilityAllowed(oakRoot.isDefined && oakRoot.get.hasPendingChanges()));
+
+  add(new StatelessLink("commit") {
+    override def onClick() =
+      oakRoot match {
+        case Some(r) ⇒ { r.commit(); setResponseToMe(); }
+        case _ ⇒ ;
+      }
+  });
+
+  add(new StatelessLink("rebase") {
+    override def onClick() =
+      oakRoot match {
+        case Some(r) ⇒ { r.rebase(); setResponseToMe(); }
+        case _ ⇒ ;
+      }
+  });
+
+  add(new StatelessLink("refresh") {
+    override def onClick() =
+      oakRoot match {
+        case Some(r) ⇒ { r.refresh(); setResponseToMe(); }
+        case _ ⇒ ;
+      }
+  });
+
+  // ---------------------------------------------------------------------------------------------------
 
   private class TypeChoiceRenderer extends IChoiceRenderer[Int] {
     override def getDisplayValue(id: Int) = Type.fromTag(id, false).toString();

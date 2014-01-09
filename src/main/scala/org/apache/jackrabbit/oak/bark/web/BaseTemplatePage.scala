@@ -31,35 +31,10 @@ abstract class BaseTemplatePage(pp: PageParameters) extends BasePage(pp) {
 
   add(new StatelessLink("logout") {
     override def onClick() = {
-      getA.logout();
+      getS.logout();
       setResponsePage(getApplication().getHomePage());
     }
-  }.setVisibilityAllowed(!getA.isRO));
+  }.setVisibilityAllowed(!getS.isRO));
 
-  add(new BookmarkablePageLink("login", classOf[Login]).setVisibilityAllowed(getA.isRO));
-  add(new WebMarkupContainer("dirty").setVisibilityAllowed(oakRoot.isDefined && oakRoot.get.hasPendingChanges()));
-
-  add(new StatelessLink("commit") {
-    override def onClick() =
-      oakRoot match {
-        case Some(r) ⇒ { r.commit(); setResponsePage(getApplication().getHomePage()); }
-        case _ ⇒ ;
-      }
-  });
-
-  add(new StatelessLink("rebase") {
-    override def onClick() =
-      oakRoot match {
-        case Some(r) ⇒ { r.rebase(); setResponsePage(getApplication().getHomePage()); }
-        case _ ⇒ ;
-      }
-  });
-
-  add(new StatelessLink("refresh") {
-    override def onClick() =
-      oakRoot match {
-        case Some(r) ⇒ { r.refresh(); setResponsePage(getApplication().getHomePage()); }
-        case _ ⇒ ;
-      }
-  });
+  add(new BookmarkablePageLink("login", classOf[Login]).setVisibilityAllowed(getS.isRO));
 }
