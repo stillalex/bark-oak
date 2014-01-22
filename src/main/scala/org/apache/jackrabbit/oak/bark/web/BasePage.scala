@@ -22,6 +22,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters
 import org.apache.jackrabbit.oak.bark.BarkApp
 import org.apache.jackrabbit.oak.api.Root
 import org.apache.jackrabbit.oak.bark.BaseSession
+import org.apache.jackrabbit.oak.spi.state.NodeStore
 
 abstract class BasePage(pp: PageParameters) extends WebPage(pp) {
 
@@ -29,9 +30,11 @@ abstract class BasePage(pp: PageParameters) extends WebPage(pp) {
 
   def getA(): BarkApp = getApplication().asInstanceOf[BarkApp];
 
-  def getS(): BaseSession = getSession().asInstanceOf[BaseSession]
+  def oakNodeStore: NodeStore = getA.store.get
 
   def oakRepository(): ContentRepository = getA.repository.get
+
+  def getS(): BaseSession = getSession().asInstanceOf[BaseSession]
 
   def oakSession(): ContentSession = getS.session.get
 

@@ -19,6 +19,7 @@ package org.apache.jackrabbit.oak.bark
 import org.apache.jackrabbit.oak.bark.web.home.Index
 import org.apache.jackrabbit.oak.bark.web.login.Login
 import org.apache.jackrabbit.oak.bark.web.view.View
+import org.apache.jackrabbit.oak.bark.web.viewadmin.ViewAdmin
 import org.apache.wicket.protocol.http.WebApplication
 import org.apache.wicket.request.{ Request, Response }
 import com.pfalabs.soak.OakRepository
@@ -41,6 +42,7 @@ class BarkApp extends WebApplication with OakRepository {
 
     mountPage("/login", classOf[Login]);
     mountPage("/view", classOf[View]);
+    mountPage("/viewadmin", classOf[ViewAdmin]);
 
     initOak("bark-oak");
   }
