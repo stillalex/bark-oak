@@ -22,7 +22,7 @@ import org.apache.jackrabbit.oak.bark.web.view.View
 import org.apache.jackrabbit.oak.bark.web.viewadmin.ViewAdmin
 import org.apache.wicket.protocol.http.WebApplication
 import org.apache.wicket.request.{ Request, Response }
-import com.pfalabs.soak.OakRepository
+import com.pfalabs.soak.simple.OakRepository
 
 class BarkApp extends WebApplication with OakRepository {
 

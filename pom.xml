@@ -28,12 +28,12 @@
     </licenses>
     <properties>
         <wicket.version>6.12.0</wicket.version>
-        <scala.version>2.10.3</scala.version>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <scala.version>2.10.4</scala.version>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <encoding>UTF-8</encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.6.4</slf4j.version>
+        <slf4j.version>1.7.7</slf4j.version>
         <logback.version>1.0.11</logback.version>
     </properties>
     <dependencies>
@@ -47,8 +47,14 @@
         <!-- OAK DEPENDENCY -->
         <dependency>
             <groupId>com.pfalabs</groupId>
-            <artifactId>soak</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <artifactId>com.pfalabs.soak</artifactId>
+            <version>0.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>oak-core</artifactId>
+            <version>1.0.5</version>
         </dependency>
 
         <!-- WICKET DEPENDENCIES -->
@@ -57,6 +63,7 @@
             <artifactId>wicket-core</artifactId>
             <version>${wicket.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-extensions</artifactId>
@@ -68,6 +75,13 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>2.0.0</version>
             <scope>provided</scope>
         </dependency>
 
