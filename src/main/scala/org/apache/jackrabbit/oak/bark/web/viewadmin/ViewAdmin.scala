@@ -44,6 +44,7 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException
 import org.apache.wicket.request.mapper.parameter.PageParameters
 import javax.jcr.PropertyType
 import org.apache.wicket.markup.html.link.StatelessLink
+import org.apache.wicket.model.IModel
 
 class ViewAdmin(pp: PageParameters) extends BaseTemplatePage(pp) {
 
@@ -281,6 +282,9 @@ class ViewAdmin(pp: PageParameters) extends BaseTemplatePage(pp) {
   private class TypeChoiceRenderer extends IChoiceRenderer[Int] {
     override def getDisplayValue(id: Int) = Type.fromTag(id, false).toString();
     override def getIdValue(id: Int, index: Int) = id.toString;
+    def getObject(id: String, choices: IModel[_ <: java.util.List[_ <: Int]]): Int = {
+      id.toInt
+    }
   }
 
 }

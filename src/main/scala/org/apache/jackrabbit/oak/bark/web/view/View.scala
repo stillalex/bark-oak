@@ -38,6 +38,7 @@ import org.apache.jackrabbit.oak.plugins.value.Conversions
 import javax.jcr.PropertyType
 import org.apache.jackrabbit.oak.plugins.memory.PropertyStates
 import org.apache.wicket.markup.html.link.StatelessLink
+import org.apache.wicket.model.IModel
 
 class View(pp: PageParameters) extends BaseTemplatePage(pp) {
 
@@ -272,6 +273,9 @@ class View(pp: PageParameters) extends BaseTemplatePage(pp) {
   private class TypeChoiceRenderer extends IChoiceRenderer[Int] {
     override def getDisplayValue(id: Int) = Type.fromTag(id, false).toString();
     override def getIdValue(id: Int, index: Int) = id.toString;
+    def getObject(id: String, choices: IModel[_ <: java.util.List[_ <: Int]]): Int = {
+      id.toInt
+    }
   }
 
 }

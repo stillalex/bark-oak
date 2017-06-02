@@ -6,11 +6,11 @@ Bark is written in Scala and uses the Apache Wicket Framework for web dev, Boots
 Components
 ----------
 
- * Apache Jackrabbit Oak (0.9-SNAPSHOT): http://jackrabbit.apache.org/oak
- * Apache Wicket (6.10.0): http://wicket.apache.org/
+ * Apache Jackrabbit Oak (1.6.1): http://jackrabbit.apache.org/oak
+ * Apache Wicket (7.7.0): http://wicket.apache.org/
  * Bootstrap (2.2.2): http://twitter.github.com/bootstrap
  * Font Awesome (v3.0): http://fortawesome.github.com/Font-Awesome
- * Built using the Scala programming language (2.10.2): http://www.scala-lang.org
+ * Built using the Scala programming language (2.12.2): http://www.scala-lang.org
 
 How to start
 ------------
@@ -18,6 +18,9 @@ How to start
 
 and you are good to go
 
+or if you already have a repository
+
+  mvn -Dbark.home=/path/to/the/segmentstore jetty:run
 
 License
 -------

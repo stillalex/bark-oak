@@ -30,9 +30,9 @@ abstract class BasePage(pp: PageParameters) extends WebPage(pp) {
 
   def getA(): BarkApp = getApplication().asInstanceOf[BarkApp];
 
-  def oakNodeStore: NodeStore = getA.store.get
+  def oakNodeStore: NodeStore = getA.store
 
-  def oakRepository(): ContentRepository = getA.repository.get
+  def oakRepository(): ContentRepository = getA.repository
 
   def getS(): BaseSession = getSession().asInstanceOf[BaseSession]
 

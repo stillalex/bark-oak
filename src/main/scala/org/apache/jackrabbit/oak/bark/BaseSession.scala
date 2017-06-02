@@ -24,19 +24,22 @@ import org.apache.jackrabbit.oak.api.ContentRepository
 import javax.jcr.GuestCredentials
 import javax.jcr.SimpleCredentials
 import com.pfalabs.soak.Sessions._
+import scala.util.Try
+import scala.util.Success
 
-class BaseSession(r: Request, repository: Option[ContentRepository]) extends WebSession(r) {
+class BaseSession(r: Request, repository: ContentRepository) extends WebSession(r) {
 
-  var session: Option[ContentSession] = guestSession(repository);
+  var session: Try[ContentSession] = asGuest(repository)
 
-  var root: Option[Root] = latestRoot(session);
+  var root: Option[Root] = latestRoot(session)
 
-  def isRO(): Boolean = isReadOnly(session);
+  var isRO: Boolean = true
 
-  def login(u: String, p: String): Either[String, ContentSession] = login(repository.get, u, p) match {
+  def login(u: String, p: String): Either[String, ContentSession] = login(repository, u, p) match {
     case Right(u) ⇒ {
-      session = Some(u);
+      session = Success(u);
       root = latestRoot(session);
+      isRO = false;
       return Right(u);
     }
     case Left(u) ⇒ {
@@ -44,20 +47,18 @@ class BaseSession(r: Request, repository: Option[ContentRepository]) extends Web
     }
   }
 
-  def logout() = if (!isReadOnly(session)) {
-    session = guestSession(repository);
+  def logout() = {
+    session = asGuest(repository);
     root = latestRoot(session);
+    isRO = true;
   }
 
   // ----------------------------------------------------
   // OAK SESSION
   // ----------------------------------------------------
 
-  private def latestRoot(session: Option[ContentSession]): Option[Root] =
-    session match {
-      case Some(s) ⇒ Some(s.getLatestRoot());
-      case None ⇒ None;
-    }
+  private def latestRoot(session: Try[ContentSession]): Option[Root] =
+    session.toOption.map(_.getLatestRoot)
 
   def login(repo: ContentRepository, u: String, p: String): Either[String, ContentSession] =
     try {

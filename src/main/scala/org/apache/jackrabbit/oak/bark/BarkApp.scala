@@ -22,9 +22,15 @@ import org.apache.jackrabbit.oak.bark.web.view.View
 import org.apache.jackrabbit.oak.bark.web.viewadmin.ViewAdmin
 import org.apache.wicket.protocol.http.WebApplication
 import org.apache.wicket.request.{ Request, Response }
-import com.pfalabs.soak.simple.OakRepository
+import javax.jcr.Repository
+import org.apache.jackrabbit.oak.api.ContentRepository
+import org.apache.jackrabbit.oak.spi.state.NodeStore
 
-class BarkApp extends WebApplication with OakRepository {
+class BarkApp extends WebApplication {
+
+  var repository: ContentRepository = null
+
+  var store: NodeStore = null
 
   override def getHomePage = classOf[Index];
 
@@ -44,7 +50,7 @@ class BarkApp extends WebApplication with OakRepository {
     mountPage("/view", classOf[View]);
     mountPage("/viewadmin", classOf[ViewAdmin]);
 
-    initOak("bark-oak");
+    store = OakRepositorySupport.newNodeStore();
+    repository = OakRepositorySupport.createRepository(store);
   }
 }
-  
